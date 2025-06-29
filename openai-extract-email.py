@@ -37,4 +37,4 @@ Yusuf
 """
 
 result = model(text, EmailExtraction)
-print("Extracted email:", result)# Extracted email: {"email":"erenyusuf170@gmail.com"}
+print("Extracted email:", result) # Extracted email: {"email":"erenyusuf170@gmail.com"}
