@@ -1,5 +1,6 @@
 import outlines
-from outlines.samplers import greedy
+from outlines.types import Regex
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
 def template(user_input: str) -> str:
@@ -12,20 +13,22 @@ def template(user_input: str) -> str:
 
 
 # Initialize model
-model_name = "HuggingFaceTB/SmolLM2-135M-Instruct"
-model = outlines.models.transformers(model_name)
+hf_model_name = "HuggingFaceTB/SmolLM2-135M-Instruct"
+hf_model = AutoModelForCausalLM.from_pretrained(hf_model_name)
+hf_tokenizer = AutoTokenizer.from_pretrained(hf_model_name)
+
+model = outlines.from_transformers(hf_model, hf_tokenizer)
 
 # Email regex pattern for extraction
-email_regex = r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,10}"
+email_regex = Regex(r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,10}")
 
 # Prompt template
 email_prompt = template(
-    "Hi John,Thanks for reaching out. You can email me at erenyusuf170@gmail.com anytime.Best,Yusuf"
+    "Hi John,Thanks for reaching out. You can email me at erenyusuf170@gmail.com anytime.Best,Yusuf."
 )
 
-email_generator = outlines.generate.regex(model, email_regex, sampler=greedy())
 
-result = email_generator(email_prompt)
+result = model(email_prompt, email_regex)
 
 print("Result:", result)
 # Result: erenyusuf170@gmail.com
