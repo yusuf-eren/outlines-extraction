@@ -1,20 +1,28 @@
+import os
+from dotenv import load_dotenv
 import outlines
 from outlines.types import Regex
 from pydantic import BaseModel
 from openai import OpenAI
 
-# Define the output schema using Pydantic
+load_dotenv()
+
+api_key = os.getenv('OPENAI_API_KEY')
+
+if not api_key:
+    raise ValueError("OPENAI_API_KEY is not defined in .env file")
+
+# Create an OpenAI client instance
+openai_client = OpenAI(api_key=api_key)
+
+# Create an Outlines model
+model = outlines.from_openai(openai_client, "gpt-4o")
+
 class EmailExtraction(BaseModel):
     name: str
     surname: str
     email: str
     phone: str
-
-# Create an OpenAI client instance
-openai_client = OpenAI()
-
-# Create an Outlines model
-model = outlines.from_openai(openai_client, "gpt-4o")
 
 # Text containing an email
 text = """
